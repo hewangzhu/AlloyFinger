@@ -50,6 +50,7 @@
       .scroll{
           width: 480px;
           height: 160px;
+          /* 空白符处理 */
           white-space: nowrap;
       }
       .nuclear-nav {
@@ -60,7 +61,7 @@
       .nuclear-nav a {
           display: inline-block;
           background-color: white;
-          cursor: pointer;
+          /* cursor: pointer; */
           width: 10px;
           height: 10px;
           -moz-border-radius: 5px;
@@ -162,6 +163,25 @@
     <div class="imgBox">
       <img src="asset/test.png" id="pinchImg">
     </div>
+    <div class="title">rotate</div>
+    <div class="imgBox">
+      <img src="asset/test.png" id="rotateImg">
+    </div>
+    <div class="title">swipe</div>
+    <div class="imgBox pb6">
+        <div class="swipeBox">
+            <div class="scroll" id="swipeScroll">
+                <img src="asset/test.png">
+                <img src="asset/test2.png">
+                <img src="asset/test3.png">            
+            </div>
+            <div class="nuclear-nav">
+                <a href="#" data-index="0" class="active"></a>
+                <a href="#" data-index="1" ></a>
+                <a href="#" data-index="2"></a>
+            </div>
+        </div>
+    </div>
     <div class="title">longTap长按</div>
     <div class="imgBox pb6">
       <div class="longTapBox" id="longTapBox">
@@ -206,6 +226,59 @@ new AlloyFinger(longtapBox,{
     overlay.style.display='block':
     overlay.style.display='none'
 
+  }
+})
+function ease(x) {
+    return Math.sqrt(1 - Math.pow(x - 1, 2));
+}
+
+var swipeScroll =document.getElementById('swipeScroll');
+var currentIndex = 0;
+Transform(swipeScroll);//转化成手势可用型
+new AlloyFinger(swipeScroll,{
+    touchMove:function(evt){
+        evt.preventDefault();
+    },
+    swipe:function(evt){
+        //    console.log(evt);
+        if(evt.direction === 'Left'){
+            if(currentIndex<2){
+                currentIndex++;
+                //    swipeScroll.style.translateX
+                new To(swipeScroll,"translateX",-160*currentIndex,500,ease,function(){
+                    activeNav(currentIndex);
+                });
+            }
+        } else if(evt.direction === 'Right'){
+                if(currentIndex >0){
+                    currentIndex--;
+                    new To(swipeScroll,"translateX",-160*currentIndex,500,ease,function(){
+                        activeNav(currentIndex);
+                    });
+                }
+        }
+    }
+})
+function activeNav(index){
+    var items = document.querySelectorAll('.nuclear-nav a');
+    items.forEach((item,i)=>{
+        if(item == i){
+            item.classList.add('active');
+        } else{
+            item.classList.remove('active')
+        }
+    })
+    // let i = 0;
+    // for(item of items){
+
+    //     i++;
+    // }
+}
+var rotateImg =document.getElementById('rotateImg');
+Transform(rotateImg);//转化成手势可用型
+new AlloyFinger(rotateImg,{
+  rotate:function(evt){
+    rotateImg.rotateZ+=evt.angle;
   }
 })
 var pinchImg =document.getElementById('pinchImg');
